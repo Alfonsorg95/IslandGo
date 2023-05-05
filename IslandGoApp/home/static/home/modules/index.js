@@ -31,5 +31,8 @@ geocoder = addGeocoder(MAP, (data) => {
     ]).then(([storesGeoJson]) => {
         setStoreNavigation(MAP, storesGeoJson);
     });
-  
 });
+
+document.getElementById("add-wishlist").onclick = function() {  
+    createWishlist();  
+}
