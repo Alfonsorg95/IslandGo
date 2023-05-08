@@ -29,12 +29,12 @@ mapboxgl.accessToken = TOKEN;
  * Create a new mapbox map instance
  * @return {Object} Map
  */
-export function addMap() {
+export function addMap(longitude=14.375416, latitude=35.937496, zoom=10) {
     const map = new mapboxgl.Map({  
         container: 'map',  
         style: 'mapbox://styles/mapbox/light-v10',  
-        center: [14.375416, 35.937496],  
-        zoom: 10 
+        center: [longitude, latitude],  
+        zoom: zoom 
     });
     
     map.addControl(new mapboxgl.NavigationControl());  
@@ -98,8 +98,8 @@ export function plotStoresOnMap(map, storesGeoJson) {
         `Rating: ${store.properties.rating || "N/A"}`; // make a marker for each feature and add to the map  
         new mapboxgl.Marker(el)  
             .setLngLat(store.geometry.coordinates)  
-            .addTo(map); el.addEventListener('click', function(e) {  
-            updateSelectedStore(store.properties.id);  
+            .addTo(map); el.addEventListener('click', function() {  
+            updateSelectedStore(store.properties.id); 
         });
     }  
 }
@@ -109,8 +109,11 @@ export function plotStoresOnMap(map, storesGeoJson) {
  * @param {Object} map
  * @param {StoreFeatureObject} point
  */
-export function flyToStore(map, point) {
-
+export function flyToStore(map, point) {  
+    map.flyTo({  
+        center: point.geometry.coordinates,  
+        zoom: 20  
+    });  
 }
 
 /**
@@ -118,6 +121,32 @@ export function flyToStore(map, point) {
  * @param {Object} map
  * @param {StoreFeatureObject} point
  */
-export function displayStoreDetails(map, point) {
-    
+export function displayStoreDetails(map, point) {  
+    const popUps = document.getElementsByClassName('mapboxgl-popup');  
+    /** Check if there is already a popup on the map and if so, remove it */  
+    if (popUps[0]){  
+        popUps[0].remove();  
+    } const popup = new mapboxgl.Popup({ closeOnClick: false })  
+        .setLngLat(point.geometry.coordinates)  
+        .setHTML(`  
+            <details>  
+                <summary><h2>${point.properties.name}</h2></summary>  
+                <dl>  
+                    <dt>Distance</dt>  
+                    <dd>Approximately <strong>${point.properties.distance.toFixed(2)} km</strong> away</dd>
+                    
+                    <dt>Address</dt>  
+                    <dd>${point.properties.address || 'N/A'}</dd>
+                    
+                    <dt>Phone</dt>  
+                    <dd>${point.properties.phone || 'N/A'}</dd>
+                    
+                    <dt>Rating</dt>  
+                    <dd>${point.properties.rating || 'N/A'}</dd>  
+                </dl>  
+            </details>  
+        `)  
+        .addTo(map);  
+    return popup;  
 }
+

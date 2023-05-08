@@ -7,10 +7,10 @@ from .models import Store
 
 
 def get_nearby_stores_within(
-    latitude: float, longitude: float, km: int = 10, limit: int = None, srid: int = 4326
+    latitude: float, longitude: float, km: int = 2, limit: int = None, srid: int = 4326
 ):
     coordinates = Point(longitude, latitude, srid=srid)
-    point = GEOSGeometry(coordinates, srid=4326)
+    point = GEOSGeometry(coordinates, srid=srid)
     return (
         Store.objects.annotate(distance=Distance("location", coordinates))
         .filter(location__distance_lte=(point, D(km=km)))

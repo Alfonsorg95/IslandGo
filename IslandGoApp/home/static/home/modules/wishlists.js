@@ -23,7 +23,12 @@ import {
  * @param {number} longitude
  */
 export async function displayNearbyWishlists(latitude, longitude) {
-
+    try {
+        const nearbyWishlists = await fetchNearbyWishlists(latitude, longitude);
+        renderWishlists('nearby-wishlists', nearbyWishlists);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 /**
@@ -31,8 +36,13 @@ export async function displayNearbyWishlists(latitude, longitude) {
  * @param {number} latitude
  * @param {number} longitude
  */
-export async function displayMyRequests(latitude, longitude) {
-
+export async function displayMyRequests(latitude, longitude) {  
+    try {  
+        const myWishlists = await fetchNearbyWishlists(latitude, longitude, {buyer: USERNAME});  
+        renderWishlists('my-wishlists', myWishlists);  
+    } catch(error) {  
+        console.error(error);  
+    }  
 }
 
 /**
@@ -40,17 +50,22 @@ export async function displayMyRequests(latitude, longitude) {
  * @param {number} latitude
  * @param {number} longitude
  */
-export async function displayMyTrips(latitude, longitude) {
-
+export async function displayMyTrips(latitude, longitude) {  
+    try {  
+        const myTrips = await fetchNearbyWishlists(latitude, longitude, {wishmaster: USERNAME});  
+        renderWishlists('my-trips', myTrips);  
+    } catch(error) {  
+        console.error(error);  
+    }  
 }
 
 /**
  * Create a new wishlist
  */
 export async function createWishlist() {  
-    const wishlistInput = document.getElementById("wishlist-items").value.trim();  
+    const wishlistInput = document.getElementById("wishlist-items").value.trim(); 
     if (USERNAME && SELECTED_STORE_ID && wishlistInput) {  
-        addWishlist(USERNAME, wishlistInput.split(","), STORE);  
+        addWishlist(USERNAME, wishlistInput.split(",").map(element => {return element.trim()}), SELECTED_STORE_ID);  
     }  
 }
 
@@ -59,6 +74,34 @@ export async function createWishlist() {
  * Update a wishlist's status
  * @param {Event} event
  */
-export async function updateWishlistStatus(event) {
-
+export async function updateWishlistStatus(event) {  
+    switch(event.target.className) {  
+        case 'accept':  
+            event.preventDefault();  
+            updateWishlist(  
+                event.target.getAttribute('data-id'),  
+                {  
+                    status: 'ACCEPTED',  
+                    wishmaster: USERNAME  
+                }  
+            ).then((result) => {  
+                updateWishlistNode(event.target, 'ACCEPTED');  
+            }).catch(error => console.error(error));
+            
+            break;  
+        case 'accepted':  
+            event.preventDefault();  
+            updateWishlist(  
+                event.target.getAttribute('data-id'),  
+                {  
+                    status: 'FULFILLED',  
+                    wishmaster: USERNAME  
+                }  
+            ).then((result) => {  
+                updateWishlistNode(event.target, 'FULFILLED');  
+            }).catch(error => console.error(error));
+            
+            break;  
+    }  
 }
+

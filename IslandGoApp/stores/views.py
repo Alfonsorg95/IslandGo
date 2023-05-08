@@ -16,7 +16,7 @@ class StoreView(viewsets.ModelViewSet):
         latitude = self.request.query_params.get("lat")
         longitude = self.request.query_params.get("lng")
 
-        radius = 10  # in kilometres
+        radius = 2  # in kilometres
         number_of_stores_to_return = 100
 
         stores = get_nearby_stores_within(
