@@ -81,12 +81,25 @@ export function convertToGeoJson(stores) {return {
     })  
 }}
 
+export function removeStoresFromMap(storesMarkers) {
+    for (let i=0; i<storesMarkers.length; i++) {
+        storesMarkers[i].remove();
+    }
+}
+
+
 /**
  * Display stores on map
  * @param {Object} map
  * @param {StoresGeoJSON} storesGeoJson
  */
-export function plotStoresOnMap(map, storesGeoJson) {  
+export function plotStoresOnMap(map, storesGeoJson) {
+    const markers = document.getElementsByClassName("store")
+    if(markers) {
+        const markersArray = Array.from(markers)
+        removeStoresFromMap(markersArray)
+    }
+
     for(let store of storesGeoJson.features) {  
         // create a HTML element for each feature  
         let el = document.createElement('div');  
@@ -96,10 +109,9 @@ export function plotStoresOnMap(map, storesGeoJson) {
         `Address: ${store.properties.address || "N/A"}\n` +  
         `Phone: ${store.properties.phone || "N/A"}\n` +  
         `Rating: ${store.properties.rating || "N/A"}`; // make a marker for each feature and add to the map  
-        new mapboxgl.Marker(el)  
-            .setLngLat(store.geometry.coordinates)  
-            .addTo(map); el.addEventListener('click', function() {  
-            updateSelectedStore(store.properties.id); 
+        new mapboxgl.Marker(el).setLngLat(store.geometry.coordinates).addTo(map);
+        el.addEventListener('click', function() {
+            updateSelectedStore(store.properties.id);
         });
     }  
 }
