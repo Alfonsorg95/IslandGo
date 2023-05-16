@@ -113,6 +113,7 @@ export function plotStoresOnMap(map, storesGeoJson) {
         el.addEventListener('click', function() {
             updateSelectedStore(store.properties.id);
             flyToStore(map, store)
+            displayStoreDetails(map, store)
         });
     }  
 }
