@@ -112,6 +112,7 @@ export function plotStoresOnMap(map, storesGeoJson) {
         new mapboxgl.Marker(el).setLngLat(store.geometry.coordinates).addTo(map);
         el.addEventListener('click', function() {
             updateSelectedStore(store.properties.id);
+            flyToStore(map, store)
         });
     }  
 }

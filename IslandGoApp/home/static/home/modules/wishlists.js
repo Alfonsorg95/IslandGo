@@ -17,12 +17,25 @@ import {
     updateWishlist,
 } from './api.js';
 
+
+export function removeWishLists() {
+    const previousWishlist = document.getElementsByClassName('wishlist')
+    if (previousWishlist) {
+        const wishlistArray = Array.from(previousWishlist)
+        for (let i=0; i<wishlistArray.length; i++) {
+            wishlistArray[i].remove();
+        }
+    }
+    
+}
+
 /**
  * Fetch and display wishlists from users nearby you
  * @param {number} latitude
  * @param {number} longitude
  */
 export async function displayNearbyWishlists(latitude, longitude) {
+    removeWishLists()
     try {
         const nearbyWishlists = await fetchNearbyWishlists(latitude, longitude);
         renderWishlists('nearby-wishlists', nearbyWishlists);
@@ -36,7 +49,8 @@ export async function displayNearbyWishlists(latitude, longitude) {
  * @param {number} latitude
  * @param {number} longitude
  */
-export async function displayMyRequests(latitude, longitude) {  
+export async function displayMyRequests(latitude, longitude) { 
+    removeWishLists() 
     try {  
         const myWishlists = await fetchNearbyWishlists(latitude, longitude, {buyer: USERNAME});  
         renderWishlists('my-wishlists', myWishlists);  
@@ -51,6 +65,7 @@ export async function displayMyRequests(latitude, longitude) {
  * @param {number} longitude
  */
 export async function displayMyTrips(latitude, longitude) {  
+    removeWishLists()
     try {  
         const myTrips = await fetchNearbyWishlists(latitude, longitude, {wishmaster: USERNAME});  
         renderWishlists('my-trips', myTrips);  
