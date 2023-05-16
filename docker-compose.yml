@@ -1,8 +1,10 @@
 version: '3.9'
 
 services:
+  
   postgres:
     image: postgis/postgis
+    container_name: postgres-1
     env_file:
       - IslandGoApp/IslandGoApp/.env
     ports:
@@ -19,5 +21,15 @@ services:
     depends_on:
       - postgres
 
+  web:
+    image: islandgodocker
+    build: .
+    command: python IslandGoApp/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file:
+      - IslandGoApp/IslandGoApp/.env
 volumes:
   postgres_data: {}
